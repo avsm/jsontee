@@ -64,5 +64,7 @@ if [ ! -e "${OPAMROOT}/config" ]; then
 fi
 
 echo "eval \`opam config env\`" >> ${ENV}
-opam pin add $1 .
+opam pin add -n $1 .
+opam depext -ui $1
+opam install -y -v -j 2 $1
 cp $OBJ/system/bin/jsontee .
