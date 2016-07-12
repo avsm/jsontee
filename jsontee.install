@@ -1,0 +1,4 @@
+bin: [
+  "?jsontee.byte" {"jsontee"}
+  "?jsontee.native" {"jsontee"}
+]

@@ -1,0 +1,3 @@
+true: annot, bin_annot, debug, principal
+true: package(ezjsonm), package(lwt), package(cmdliner), package(lwt.unix)
+true: package(fmt.cli), package(fmt.tty), package(logs.fmt), package(logs.cli)

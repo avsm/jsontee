@@ -1,0 +1,22 @@
+opam-version: "1.2"
+name: "jsontee"
+version: "dev"
+maintainer: "Anil Madhavapeddy <anil@recoil.org>"
+authors: "Anil Madhavapeddy <anil@recoil.org>"
+homepage: "https://github.com/avsm/jsontee"
+bug-reports: "https://github.com/avsm/jsontee/issues"
+license: "ISC"
+dev-repo: "https://github.com/avsm/jsontee.git"
+build: [ [make] ]
+install: []
+remove: []
+depends: [
+  "ocamlfind" {build}
+  "ocamlbuild" {build}
+  "base-unix"
+  "ezjsonm"
+  "lwt"
+  "cmdliner"
+  "fmt"
+  "logs"
+]
