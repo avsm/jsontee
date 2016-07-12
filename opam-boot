@@ -17,7 +17,7 @@ if [ "$PKG" = "" ]; then
 fi
 
 OBJ=`mktemp -d`
-function cleanup {
+cleanup() {
   rm -rf "$OBJ"
   rm -f opam-env.sh
 }
