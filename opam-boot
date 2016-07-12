@@ -1,0 +1,68 @@
+#!/bin/sh -ex
+
+V=1.2.2
+FILE=opam-full-${V}.tar.gz
+URL=https://github.com/ocaml/opam/releases/download/${V}/${FILE}
+
+OPAM_VERSION=`opam --version 2>/dev/null || true`
+OCAML_VERSION=`ocamlc -version 2>/dev/null || true`
+
+PKG=$1
+
+if [ "$PKG" = "" ]; then
+  echo "Usage: $0 <package-name>"
+  echo ""
+  echo "<package-name>: name of the OPAM package being built"
+  exit 1
+fi
+
+OBJ=`mktemp -d`
+function cleanup {
+  rm -rf "$OBJ"
+  rm -f opam-env.sh
+}
+if [ ! -d "${OBJ}" ]; then
+  echo Failed to create temp dir
+  exit 1
+fi
+trap cleanup EXIT
+  
+ENV=`pwd`/opam-env.sh
+echo "export OPAMROOT=\"$OBJ\"" > ${ENV}
+chmod a+x opam-env.sh
+if [ "$OPAM_VERSION" = "" ]; then
+  echo OPAM not installed, performing a local installation
+  rm -rf ${OBJ}
+  mkdir -p ${OBJ}
+  cd ${OBJ}
+  curl -OL ${URL}
+  tar -zxf ${FILE}
+  cd opam-full-${V}
+  if [ "$OCAML_VERSION" = "" ]; then
+    echo OCaml not installed, performing a local installation
+    make cold CONFIGURE_ARGS="--prefix=${OBJ}"
+  else
+    ./configure --prefix=${OBJ}
+    make lib-ext
+    make
+  fi
+  make install
+  echo "export PATH=\$PATH:$OBJ/bin" >> ${ENV}
+  cd ${OBJ}/..
+fi
+
+export OPAMYES=1
+export OPAMJOBS=2
+
+. ${ENV}
+if [ ! -e "${OPAMROOT}/config" ]; then
+  if [ "$OCAML_VERSION" = "" ]; then
+    opam init -a --comp=4.03.0
+  else
+    opam init -a
+  fi
+fi
+
+echo "eval \`opam config env\`" >> ${ENV}
+opam pin add $1 .
+cp $OBJ/system/bin/jsontee .

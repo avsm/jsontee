@@ -8,3 +8,7 @@ jsontee.native: jsontee.ml
 
 clean:
 	rm -rf _build
+
+jsontee:
+	./opam-boot $@
+	strip $@

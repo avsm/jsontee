@@ -2,3 +2,5 @@ _build/
 .*.swp
 *.native
 *.byte
+jsontee
+opam-env.sh
