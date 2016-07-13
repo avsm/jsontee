@@ -1,0 +1,5 @@
+PKG bytes
+S src
+S src-bin
+S test
+B _build/**

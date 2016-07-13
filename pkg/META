@@ -1,0 +1,7 @@
+description = "capture process output and exit code as a JSON stream"
+version = "%%VERSION%%"
+requires = "ezjsonm logs fmt"
+archive(byte) = "jsontee.cma"
+archive(native) = "jsontee.cmxa"
+plugin(byte) = "jsontee.cma"
+plugin(native) = "jsontee.cmxs"

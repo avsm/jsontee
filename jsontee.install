@@ -1,4 +1,19 @@
+# jsontee
+
 bin: [
-  "?jsontee.byte" {"jsontee"}
-  "?jsontee.native" {"jsontee"}
-]
+  "_build/src-bin/jsontee_bin.native" {"jsontee"} ]
+doc: [
+  "_build/CHANGES.md" {"CHANGES.md"}
+  "_build/LICENSE.md" {"LICENSE.md"}
+  "_build/README.md" {"README.md"} ]
+lib: [
+  "_build/opam" {"opam"}
+  "_build/pkg/META" {"META"}
+  "_build/src/jsontee.a" {"jsontee.a"}
+  "_build/src/jsontee.cma" {"jsontee.cma"}
+  "_build/src/jsontee.cmi" {"jsontee.cmi"}
+  "?_build/src/jsontee.cmti" {"jsontee.cmti"}
+  "_build/src/jsontee.cmx" {"jsontee.cmx"}
+  "_build/src/jsontee.cmxa" {"jsontee.cmxa"}
+  "_build/src/jsontee.cmxs" {"jsontee.cmxs"}
+  "_build/src/jsontee.mli" {"jsontee.mli"} ]

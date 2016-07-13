@@ -1,6 +1,10 @@
-_build/
-.*.swp
+_build
+tmp
+*~
+\.\#*
+\#*#
+*.install
 *.native
 *.byte
-jsontee
 opam-env.sh
+.*.swp

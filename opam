@@ -1,15 +1,13 @@
 opam-version: "1.2"
-name: "jsontee"
-version: "dev"
 maintainer: "Anil Madhavapeddy <anil@recoil.org>"
-authors: "Anil Madhavapeddy <anil@recoil.org>"
+authors: ["Anil Madhavapeddy <anil@recoil.org>"]
 homepage: "https://github.com/avsm/jsontee"
-bug-reports: "https://github.com/avsm/jsontee/issues"
-license: "ISC"
+doc: "https://github.com/avsm/jsontee"
 dev-repo: "https://github.com/avsm/jsontee.git"
-build: [ [make] ]
-install: []
-remove: []
+bug-reports: "https://github.com/avsm/jsontee/issues"
+tags: [ "org:mirage" "org:ocamllabs" ]
+license: "ISC"
+available: [ ocaml-version >= "4.01.0"]
 depends: [
   "ocamlfind" {build}
   "ocamlbuild" {build}
@@ -19,4 +17,7 @@ depends: [
   "cmdliner"
   "fmt"
   "logs"
-]
+ ]
+build:
+[[ "ocaml" "pkg/pkg.ml" "build"
+           "--installer" "true" ]]
