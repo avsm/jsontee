@@ -35,6 +35,8 @@ let process proc =
     | None -> Lwt.return_unit
     | Some line ->
        add_line fd line;
+       Lwt_io.fprintl (match fd with 2 -> Lwt_io.stderr |_ -> Lwt_io.stdout) line
+       >>= fun () ->
        process_fd fd chan
   in
   let stdout_t = process_fd 1 proc#stdout in
