@@ -1,14 +1,13 @@
-.PHONY: all clean
+.PHONY: all tests doc clean
 
-all: jsontee.native
-	@ :
+all:
+	./build
 
-jsontee.native: jsontee.ml
-	ocamlbuild -use-ocamlfind -classic-display $@
+tests:
+	./build tests
+
+doc:
+	./build doc
 
 clean:
 	rm -rf _build
-
-jsontee:
-	./opam-boot $@
-	strip $@
