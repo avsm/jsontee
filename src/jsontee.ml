@@ -1,8 +1,26 @@
 (*---------------------------------------------------------------------------
-   Copyright (c) 2016 Anil Madhavapeddy. All rights reserved.
+ Copyright (c) 2016 Anil Madhavapeddy. All rights reserved.
    Distributed under the ISC license, see terms at the end of the file.
    %%NAME%% %%VERSION%%
   ---------------------------------------------------------------------------*)
+
+type line = {
+  fd: int;
+  time: float;
+  line: string;
+}
+
+let line_to_json l =
+  `O [ "fd", `String (string_of_int l.fd);
+       "time", `Float l.time;
+       "line", `String l.line ]
+
+let lines_to_json ~status ~code ~lines =
+  `O [ "status", `String status;
+       "code", `String code;
+       "exitcode", `String code;
+       "lines", `A (List.map line_to_json lines) ]
+
 
 (*---------------------------------------------------------------------------
    Copyright (c) 2016 Anil Madhavapeddy

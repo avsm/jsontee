@@ -17,23 +17,6 @@
 
 open Lwt.Infix
 
-type line = {
-  fd: int;
-  time: float;
-  line: string;
-}
-
-let line_to_json l =
-  `O [ "fd", `String (string_of_int l.fd);
-       "time", `Float l.time;
-       "line", `String l.line ]
-
-let lines_to_json ~status ~code ~lines =
-  `O [ "status", `String status;
-       "code", `String code;
-       "exitcode", `String code;
-       "lines", `A (List.map line_to_json lines) ]
-
 let exit_code_of_process status =
   match status with
   | Unix.WEXITED code -> "exit", (string_of_int code)
@@ -44,7 +27,7 @@ let process proc =
   let lines = ref [] in
   let add_line fd line =
     let time = Unix.gettimeofday () in
-    let l = { fd; time; line } in
+    let l = { Jsontee.fd; time; line } in
     lines := l :: !lines
   in
   let rec process_fd fd chan =
@@ -59,7 +42,7 @@ let process proc =
   (stdout_t <&> stderr_t) >>= fun () ->
   proc#status >>= fun status ->
   let status, code = exit_code_of_process status in
-  let json = lines_to_json ~status ~code ~lines:!lines in
+  let json = Jsontee.lines_to_json ~status ~code ~lines:!lines in
   Lwt.return json
 
 let run cmd () =

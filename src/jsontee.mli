@@ -10,6 +10,16 @@
 
 (** {1 Jsontee} *)
 
+type line = {
+  fd: int;
+  time: float;
+  line: string;
+}
+
+val line_to_json : line -> Ezjsonm.t
+
+val lines_to_json : status:string -> code:string -> lines:line list -> Ezjsonm.t
+
 (*---------------------------------------------------------------------------
    Copyright (c) 2016 Anil Madhavapeddy
 
