@@ -11,3 +11,6 @@ doc:
 
 clean:
 	rm -rf _build
+
+jsontee:
+	./opam-boot jsontee
