@@ -23,7 +23,7 @@ let exit_code_of_process status =
   | Unix.WSIGNALED signal -> "signal", (string_of_int signal)
   | Unix.WSTOPPED signal -> "stopped", (string_of_int signal)
  
-let process proc =
+let process command proc =
   let lines = ref [] in
   let add_line fd line =
     let time = Unix.gettimeofday () in
@@ -42,7 +42,7 @@ let process proc =
   (stdout_t <&> stderr_t) >>= fun () ->
   proc#status >>= fun status ->
   let status, code = exit_code_of_process status in
-  let json = Jsontee.lines_to_json ~status ~code ~lines:!lines in
+  let json = Jsontee.lines_to_json ~command ~status ~code ~lines:!lines in
   Lwt.return json
 
 let run cmd () =
@@ -51,7 +51,7 @@ let run cmd () =
   | argv_0::argv_n -> 
     Logs.info (fun p -> p "Executing %s %s" argv_0 (String.concat " " argv_n));
     let command = argv_0, (Array.of_list argv_n) in
-    let json = Lwt_main.run (Lwt_process.with_process_full command process) in
+    let json = Lwt_main.run (Lwt_process.with_process_full command (process command)) in
     print_endline (Ezjsonm.to_string json);
     `Ok ()
 

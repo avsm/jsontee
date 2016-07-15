@@ -15,8 +15,11 @@ let line_to_json l =
        "time", `Float l.time;
        "line", `String l.line ]
 
-let lines_to_json ~status ~code ~lines =
-  `O [ "status", `String status;
+let lines_to_json ~command ~status ~code ~lines =
+  let cmd, args = command in
+  let cmdline = `A (`String cmd :: (List.map (fun x -> `String x)) (Array.to_list args)) in
+  `O [ "cmdline", cmdline;
+       "status", `String status;
        "code", `String code;
        "exitcode", `String code;
        "lines", `A (List.map line_to_json lines) ]
