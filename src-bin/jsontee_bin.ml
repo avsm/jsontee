@@ -59,8 +59,7 @@ let run cmd () =
 let setup_log style_renderer level =
   Fmt_tty.setup_std_outputs ?style_renderer ();
   Logs.set_level level;
-  Logs.set_reporter (Logs_fmt.reporter ());
-  ()
+  Logs.set_reporter (Logs_fmt.reporter ())
 
 open Cmdliner
 
