@@ -28,6 +28,7 @@ let process command proc =
   let add_line fd line =
     let time = Unix.gettimeofday () in
     let l = { Jsontee.fd; time; line } in
+    Logs.debug (fun p -> p "%d: %s" fd line);
     lines := l :: !lines
   in
   let rec process_fd fd chan =
@@ -45,15 +46,27 @@ let process command proc =
   let json = Jsontee.lines_to_json ~command ~status ~code ~lines:!lines in
   Lwt.return json
 
-let run cmd () =
+let run_lwt ofile command =
+  Lwt.catch (fun () ->
+    (match ofile with
+    |"-" -> Lwt.return (Lwt_io.stdout)
+    |file -> Lwt_io.open_file Lwt_io.output file) >>= fun oc ->
+    Lwt_process.with_process_full command (process command) >>= fun json ->
+    Ezjsonm.to_string json |>
+    Lwt_io.fprint oc >>= fun () ->
+    Lwt.return (`Ok ())
+  ) (function
+    | Unix.Unix_error (_,"open",_) -> Lwt.return (`Error (false, "Unable to open output file for writing"))
+    | exn -> Lwt.return (`Error (true, Printexc.to_string exn))
+  )
+
+let run cmd ofile () =
   match cmd with
   | [] -> `Error (true, "Need a non-empty command to execute")
   | argv_0::_ as argv -> 
     Logs.info (fun p -> p "Executing %s" (String.concat " " argv));
     let command = argv_0, (Array.of_list argv) in
-    let json = Lwt_main.run (Lwt_process.with_process_full command (process command)) in
-    print_endline (Ezjsonm.to_string json);
-    `Ok ()
+    Lwt_main.run (run_lwt ofile command)
 
 (* Command line interface *)
 let setup_log style_renderer level =
@@ -68,6 +81,10 @@ let setup_log =
 
 let cmd_args = Arg.(non_empty & pos_all string [] & info [] ~docv:"COMMAND")
 
+let ofile = 
+  let doc = "Output file to store the JSON in. Use $(b,-) for stdout." in
+  Arg.(value & opt string "-" & info ["o";"output-file"] ~docv:"OUTPUT_FILE" ~doc)
+
 let cmd =
   let doc = "jsontee captures the stdout, stderr and exit code of a sub-process" in
   let man = [
@@ -76,7 +93,7 @@ let cmd =
     `S "SEE ALSO";
     `P "$(b,tee)(1), $(b,jq)(1)" ]
   in
-  Term.(ret (const run $ cmd_args $ setup_log)),
+  Term.(ret (const run $ cmd_args $ ofile $ setup_log)),
   Term.info "jsontee" ~version:"1.0.0" ~doc ~man
 
 let () = match Term.eval cmd with `Error _ -> exit 1 
